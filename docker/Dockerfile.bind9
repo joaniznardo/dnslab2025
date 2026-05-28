@@ -1,0 +1,19 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        bind9 \
+        bind9utils \
+        dnsutils \
+        iproute2 \
+        iputils-ping \
+        iputils-tracepath && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /var/log/bind /var/cache/bind /etc/bind/zones /run/named && \
+    chown -R bind:bind /var/log/bind /var/cache/bind /run/named
+
+EXPOSE 53/tcp 53/udp
+
+CMD ["sleep", "infinity"]

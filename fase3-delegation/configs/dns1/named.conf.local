@@ -1,0 +1,21 @@
+// named.conf.local — zones del servidor primari dns1 (fase 3)
+// Delegació de magatzem.demobind.test als servidors dns3 i dns4
+// Els glue records (A de dns3 i dns4) estan al fitxer de zona
+
+zone "demobind.test" {
+    type master;
+    file "/etc/bind/zones/db.demobind.test";
+    allow-query { any; };
+    allow-transfer { 10.25.50.12; };
+    notify yes;
+    also-notify { 10.25.50.12; };
+};
+
+zone "50.25.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.10.25.50";
+    allow-query { any; };
+    allow-transfer { 10.25.50.12; };
+    notify yes;
+    also-notify { 10.25.50.12; };
+};

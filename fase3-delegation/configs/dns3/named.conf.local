@@ -1,0 +1,11 @@
+// named.conf.local — zones del servidor primari dns3
+// Autoritatiu per al subdomini delegat magatzem.demobind.test
+
+zone "magatzem.demobind.test" {
+    type master;
+    file "/etc/bind/zones/db.magatzem.demobind.test";
+    allow-query { any; };
+    allow-transfer { 10.25.50.22; };
+    notify yes;
+    also-notify { 10.25.50.22; };
+};

@@ -1,0 +1,62 @@
+# Fase 2: DNS primari + secundari
+# ================================
+# - dns1: Servidor BIND9 primari (permet AXFR a dns2, NOTIFY activat)
+# - dns2: Servidor BIND9 secundari (replica zones via AXFR)
+# - cl01: Client textual amb dig, nslookup, host
+#
+# Desplegament: ./lab.sh deploy 2
+
+name: bind9-fase2
+
+mgmt:
+  network: clab-mgmt
+  ipv4-subnet: 172.20.20.0/24
+
+topology:
+  nodes:
+    br-dns:
+      kind: bridge
+
+    dns1:
+      kind: linux
+      image: bind9-lab:latest
+      binds:
+        - ./configs/dns1/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns1/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns1/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns1/named.conf.logging:/etc/bind/named.conf.logging:ro
+        - ./configs/dns1/zones:/etc/bind/zones:ro
+      exec:
+        - ip addr add 10.25.50.11/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    dns2:
+      kind: linux
+      image: bind9-lab:latest
+      startup-delay: 10
+      binds:
+        - ./configs/dns2/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns2/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns2/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns2/named.conf.logging:/etc/bind/named.conf.logging:ro
+      exec:
+        - ip addr add 10.25.50.12/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    cl01:
+      kind: linux
+      image: nicolaka/netshoot:latest
+      exec:
+        - ip addr add 10.25.50.101/24 dev eth1
+        - sh -c 'echo "nameserver 10.25.50.11" > /etc/resolv.conf'
+        - sh -c 'echo "nameserver 10.25.50.12" >> /etc/resolv.conf'
+        - sh -c 'echo "search demobind.test" >> /etc/resolv.conf'
+
+  links:
+    - endpoints: ["dns1:eth1", "br-dns:eth1"]
+    - endpoints: ["dns2:eth1", "br-dns:eth2"]
+    - endpoints: ["cl01:eth1", "br-dns:eth3"]

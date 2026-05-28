@@ -1,0 +1,20 @@
+// named.conf.local — zones del servidor primari dns1 (fase 2)
+// Transferència de zona activada cap a dns2 (10.25.50.12)
+
+zone "demobind.test" {
+    type master;
+    file "/etc/bind/zones/db.demobind.test";
+    allow-query { any; };
+    allow-transfer { 10.25.50.12; };
+    notify yes;
+    also-notify { 10.25.50.12; };
+};
+
+zone "50.25.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.10.25.50";
+    allow-query { any; };
+    allow-transfer { 10.25.50.12; };
+    notify yes;
+    also-notify { 10.25.50.12; };
+};

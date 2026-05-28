@@ -1,0 +1,14 @@
+// named.conf.local — zones del servidor secundari dns2 (fase 2)
+// Replicació per AXFR des de dns1 (10.25.50.11)
+
+zone "demobind.test" {
+    type slave;
+    masters { 10.25.50.11; };
+    file "/var/cache/bind/db.demobind.test.slave";
+};
+
+zone "50.25.10.in-addr.arpa" {
+    type slave;
+    masters { 10.25.50.11; };
+    file "/var/cache/bind/db.10.25.50.slave";
+};

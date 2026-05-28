@@ -1,0 +1,20 @@
+; db.10.25.50 — Zona inversa per a 10.25.50.0/24
+; Domini: 50.25.10.in-addr.arpa
+; Fase 1: DNS primari únic
+
+$TTL 86400
+@   IN  SOA dns1.demobind.test. hostmaster.demobind.test. (
+        2026052801  ; serial
+        3600        ; refresh
+        900         ; retry
+        604800      ; expire
+        86400 )     ; negative TTL
+
+; Servidors de noms
+@       IN  NS  dns1.demobind.test.
+
+; Registres PTR (resolució inversa)
+11      IN  PTR dns1.demobind.test.
+50      IN  PTR mail.demobind.test.
+80      IN  PTR www.demobind.test.
+101     IN  PTR cl01.demobind.test.

@@ -1,0 +1,96 @@
+# Fase 3: Delegació del subdomini magatzem.demobind.test
+# ========================================================
+# - dns1: Primari de demobind.test (amb NS de delegació + glue records)
+# - dns2: Secundari de demobind.test (replicació AXFR)
+# - dns3: Primari de magatzem.demobind.test
+# - dns4: Secundari de magatzem.demobind.test (replicació AXFR de dns3)
+# - cl01: Client textual
+#
+# Desplegament: ./lab.sh deploy 3
+
+name: bind9-fase3
+
+mgmt:
+  network: clab-mgmt
+  ipv4-subnet: 172.20.20.0/24
+
+topology:
+  nodes:
+    br-dns:
+      kind: bridge
+
+    dns1:
+      kind: linux
+      image: bind9-lab:latest
+      binds:
+        - ./configs/dns1/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns1/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns1/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns1/named.conf.logging:/etc/bind/named.conf.logging:ro
+        - ./configs/dns1/zones:/etc/bind/zones:ro
+      exec:
+        - ip addr add 10.25.50.11/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    dns2:
+      kind: linux
+      image: bind9-lab:latest
+      startup-delay: 10
+      binds:
+        - ./configs/dns2/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns2/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns2/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns2/named.conf.logging:/etc/bind/named.conf.logging:ro
+      exec:
+        - ip addr add 10.25.50.12/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    dns3:
+      kind: linux
+      image: bind9-lab:latest
+      binds:
+        - ./configs/dns3/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns3/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns3/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns3/named.conf.logging:/etc/bind/named.conf.logging:ro
+        - ./configs/dns3/zones:/etc/bind/zones:ro
+      exec:
+        - ip addr add 10.25.50.21/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    dns4:
+      kind: linux
+      image: bind9-lab:latest
+      startup-delay: 10
+      binds:
+        - ./configs/dns4/named.conf:/etc/bind/named.conf:ro
+        - ./configs/dns4/named.conf.options:/etc/bind/named.conf.options:ro
+        - ./configs/dns4/named.conf.local:/etc/bind/named.conf.local:ro
+        - ./configs/dns4/named.conf.logging:/etc/bind/named.conf.logging:ro
+      exec:
+        - ip addr add 10.25.50.22/24 dev eth1
+        - mkdir -p /var/log/bind /run/named
+        - chown -R bind:bind /var/log/bind /run/named
+        - /usr/sbin/named -u bind
+
+    cl01:
+      kind: linux
+      image: nicolaka/netshoot:latest
+      exec:
+        - ip addr add 10.25.50.101/24 dev eth1
+        - sh -c 'echo "nameserver 10.25.50.11" > /etc/resolv.conf'
+        - sh -c 'echo "nameserver 10.25.50.12" >> /etc/resolv.conf'
+        - sh -c 'echo "search demobind.test" >> /etc/resolv.conf'
+
+  links:
+    - endpoints: ["dns1:eth1", "br-dns:eth1"]
+    - endpoints: ["dns2:eth1", "br-dns:eth2"]
+    - endpoints: ["dns3:eth1", "br-dns:eth3"]
+    - endpoints: ["dns4:eth1", "br-dns:eth4"]
+    - endpoints: ["cl01:eth1", "br-dns:eth5"]

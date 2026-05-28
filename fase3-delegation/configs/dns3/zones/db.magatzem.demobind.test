@@ -1,0 +1,19 @@
+; db.magatzem.demobind.test — Zona directa del subdomini delegat
+; Autoritat: dns3 (primari), dns4 (secundari)
+; Hosts: rodes (10.25.50.60), prestatgeries (10.25.50.61)
+
+$TTL 86400
+@   IN  SOA dns3.demobind.test. hostmaster.magatzem.demobind.test. (
+        2026052801  ; serial
+        3600        ; refresh  (1 hora)
+        900         ; retry    (15 minuts)
+        604800      ; expire   (1 setmana)
+        86400 )     ; negative TTL (1 dia)
+
+; Servidors de noms del subdomini
+@               IN  NS      dns3.demobind.test.
+@               IN  NS      dns4.demobind.test.
+
+; Hosts del subdomini magatzem
+rodes           IN  A       10.25.50.60
+prestatgeries   IN  A       10.25.50.61

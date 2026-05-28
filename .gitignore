@@ -1,0 +1,14 @@
+# Avaluació — PDFs i fitxers generats
+assesment/
+
+# Containerlab
+clab-*/
+.lab-fase
+
+# Docker
+*.tar
+
+# Editors
+*.swp
+*~
+.DS_Store

@@ -1,0 +1,23 @@
+; db.demobind.test — Zona directa de demobind.test
+; Fase 1: DNS primari únic
+; Serial format: YYYYMMDDNN
+
+$TTL 86400
+@   IN  SOA dns1.demobind.test. hostmaster.demobind.test. (
+        2026052801  ; serial
+        3600        ; refresh  (1 hora)
+        900         ; retry    (15 minuts)
+        604800      ; expire   (1 setmana)
+        86400 )     ; negative TTL (1 dia)
+
+; Servidors de noms
+@       IN  NS      dns1.demobind.test.
+
+; Registres MX (correu)
+@       IN  MX  10  mail.demobind.test.
+
+; Hosts del domini
+dns1            IN  A       10.25.50.11
+mail            IN  A       10.25.50.50
+www             IN  A       10.25.50.80
+cl01            IN  A       10.25.50.101

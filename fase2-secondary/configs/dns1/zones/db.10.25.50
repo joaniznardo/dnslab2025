@@ -1,0 +1,22 @@
+; db.10.25.50 — Zona inversa per a 10.25.50.0/24
+; Fase 2: Primari + secundari
+
+$TTL 86400
+@   IN  SOA dns1.demobind.test. hostmaster.demobind.test. (
+        2026052802  ; serial
+        3600        ; refresh
+        900         ; retry
+        604800      ; expire
+        86400 )     ; negative TTL
+
+; Servidors de noms
+@       IN  NS  dns1.demobind.test.
+@       IN  NS  dns2.demobind.test.
+
+; Registres PTR
+11      IN  PTR dns1.demobind.test.
+12      IN  PTR dns2.demobind.test.
+50      IN  PTR mail.demobind.test.
+80      IN  PTR www.demobind.test.
+101     IN  PTR cl01.demobind.test.
+102     IN  PTR cl02.demobind.test.

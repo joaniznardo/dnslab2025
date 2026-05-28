@@ -1,0 +1,8 @@
+// named.conf.local — zones del servidor secundari dns4
+// Replicació de magatzem.demobind.test des de dns3 (10.25.50.21)
+
+zone "magatzem.demobind.test" {
+    type slave;
+    masters { 10.25.50.21; };
+    file "/var/cache/bind/db.magatzem.demobind.test.slave";
+};
